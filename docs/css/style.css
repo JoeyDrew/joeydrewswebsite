@@ -1,0 +1,24 @@
+html {
+  font-size: 16px;
+  font-family: sans-serif;
+  line-height: 1.35;
+}
+
+body {
+  max-width: 500px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+p {
+  border-style: groove;
+}
+
+img {
+  max-width: 500px;
+  height: auto;
+}
+
+footer {
+  text-align: middle;
+}
