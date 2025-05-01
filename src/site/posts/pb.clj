@@ -1,4 +1,4 @@
-(ns site.posts.posttest
+(ns site.posts.pb
   (:require [hiccup2.core :as h]))
 
 (defn page []
@@ -11,8 +11,7 @@
              [:span {:class "hljs-keyword"} "for"] " bass, pads."] "-"
             [:span {:class "ruby"} "- Percussion from the MPC"]]]
           [:p
-           [:img {:src "/img/kevin.jpg", :alt "kevin"}]
-           [:a {:href "http://joeydrew.com/img/kevin.jpg"} "full size image"]]
+           [:img {:src "/img/kevin.jpg", :alt "kevin"}]]
           [:blockquote
            [:p "Minolta X570 | 28mm ƒ/2.8 MD | Portra 400"]]
           [:p

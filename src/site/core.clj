@@ -1,6 +1,5 @@
 (ns site.core
   (:require [clojure.tools.namespace.find :as ns-find]
-            [clojure.tools.namespace.repl :as refresh]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [stasis.core :as stasis]
@@ -9,12 +8,6 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [hiccup.page :refer [html5]]
             [garden.core :refer [css]]))
-
-;; TODO:
-;; - fix namespace reloading
-;; - make the styling not awful
-;; - put together microblog functionality
-;; - figure out 'panes' and site structure
 
 (def out-dir "docs")
 
@@ -46,16 +39,13 @@
            page]
           [:footer
            [:div
-            [:div
-             [:a {:href "/"} "Home page"]
-             [:div
-              [:a {:href "/posts"} "Posts"]]]]
+            [:a {:href "/"} "Home"]
+            [:a {:href "/posts"} "Posts"]
+            [:a {:href "/about.html"} "About"]]
            [:p "the foghorns sure are loud today"]]]))
 
 (defn load-posts
-  "loops through hardcoded test ns paths,
-   pulls the hardcoded 'page' ns symbol
-   from each, and processes each one."
+  "loops through post namespaces and pulls in page functions"
   []
   (into {}
         (for [ns-sym (post-namespaces)]
@@ -77,14 +67,20 @@
   []
   (css [:html {:font-size "16px"
                :font-family "sans-serif"
-               :line-height "1.35"}]
+               :line-height "1.35"
+               :background-color "#fdf6e3"}]
        [:body {:max-width "500px"
                :margin-top "10px"
                :margin-bottom "10px"}]
        [:p {:border-style "groove"}]
        [:img {:max-width "500px"
               :height "auto"}]
-       [:footer {:text-align "middle"}]))
+       [:footer {:text-align "justify"}]))
+
+(defn about
+  "create about page"
+  []
+  {"/about.html" (html5 [:p "systems"])})
 
 (defn home
   "create homepage"
@@ -99,7 +95,7 @@
   []
   (let [posts (load-posts)
         post-index {"/posts/index.html" (generate-post-index posts)}
-        all-pages (merge posts post-index (home))
+        all-pages (merge posts post-index (home) (about))
         page-map (format-pages all-pages)
         css-map {"/css/style.css" (style)}]
     (stasis/merge-page-sources {:css css-map
@@ -109,13 +105,10 @@
 ;; needs some work to fix namespace (post) reloading
 (def app
   (-> (stasis/serve-pages (merge-website-assets!))
-      wrap-reload
+      (wrap-reload {:dirs "src"})
       (wrap-resource "static")
       wrap-refresh))
 
-;; FIX: 
-;; needs static assets to be included (which could happen outsite of stasis functions)
-;; and testing via serving the out-dir
 (defn export!
   "build static site"
   []
